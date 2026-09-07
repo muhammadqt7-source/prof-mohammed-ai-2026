@@ -1,0 +1,370 @@
+{
+  "users": {
+    "user_qr082i5q_mtp079pv": {
+      "id": "user_qr082i5q_mtp079pv",
+      "username": "باحث_AI_79pv",
+      "points": 50,
+      "xp": 0,
+      "level": "BEGINNER",
+      "currentStreak": 0,
+      "highestStreak": 0,
+      "lastClaimDate": null,
+      "completedTasksCount": 0,
+      "campaignsCreatedCount": 0,
+      "createdAt": "2026-09-05T23:18:12.270Z",
+      "updatedAt": "2026-09-05T23:51:07.890Z",
+      "role": "user",
+      "firstCampaignBonusGranted": true
+    }
+  },
+  "campaigns": {},
+  "tasks": {
+    "task_mohammad_ai_channel": {
+      "id": "task_mohammad_ai_channel",
+      "title": "استكشاف قناة بروفيسور محمد مهدي AI الرسمية",
+      "description": "قم بزيارة القناة والاطلاع على أحدث محتوى تعليمي في الذكاء الاصطناعي وهندسة الأوامر.",
+      "taskType": "VISIT_URL",
+      "platform": "YouTube / Telegram",
+      "targetUrl": "https://youtube.com/@ProfessorMohammadMahdiAI",
+      "targetUsername": "@ProfMohammadMahdi",
+      "reward": 1,
+      "xpReward": 0,
+      "estimatedMinutes": 2,
+      "instructions": [
+        "اضغط على زر فتح المهمة للانتقال إلى القناة",
+        "تصفح أحدث الفيديوهات التعليمية",
+        "عد هنا واضغط أنجزت المهمة لتسجيل إنجازك"
+      ],
+      "status": "ACTIVE",
+      "totalCompletionsRequired": 500,
+      "currentCompletions": 16,
+      "createdAt": "2026-09-05T23:12:19.232Z",
+      "isAccountVerified": false
+    },
+    "task_neural_networks_guide": {
+      "id": "task_neural_networks_guide",
+      "title": "قراءة دليل: أسرار الشبكات العصبية العميقة",
+      "description": "مقالة تعليمية حصرية تشرح كيف تفكر النماذج اللغوية الكبيرة واستخداماتها العملية.",
+      "taskType": "READ_ARTICLE",
+      "platform": "AI Academy",
+      "targetUrl": "https://ai.studio",
+      "reward": 1,
+      "xpReward": 0,
+      "estimatedMinutes": 3,
+      "instructions": [
+        "اقرأ الملخص التعليمي للشبكات العصبية",
+        "افهم الفرق بين المعالجة الكلاسيكية والذكاء الاصطناعي التوليدي",
+        "أكد قراءتك بالضغط على زر إنجاز المهمة"
+      ],
+      "status": "ACTIVE",
+      "totalCompletionsRequired": 300,
+      "currentCompletions": 28,
+      "createdAt": "2026-09-05T23:12:19.233Z",
+      "isAccountVerified": false
+    },
+    "task_prompt_engineering_quiz": {
+      "id": "task_prompt_engineering_quiz",
+      "title": "اختبار سريع: أساسيات هندسة الأوامر المتقدمة (Prompting)",
+      "description": "أجب عن التحدي التعليمي السريع لاختبار مهاراتك في توجيه نماذج الذكاء الاصطناعي.",
+      "taskType": "COMPLETE_QUIZ",
+      "platform": "Professor AI Lab",
+      "targetUrl": "https://ai.studio",
+      "reward": 1,
+      "xpReward": 0,
+      "estimatedMinutes": 4,
+      "instructions": [
+        "ابدأ الاختبار واقرأ أسئلة هندسة الأوامر",
+        "اختر الاستراتيجيات الأنسب لتقليل الهلوسة في النماذج",
+        "احصل على تقييم فوري ونقاط المكافأة"
+      ],
+      "status": "ACTIVE",
+      "totalCompletionsRequired": 200,
+      "currentCompletions": 45,
+      "createdAt": "2026-09-05T23:12:19.233Z",
+      "isAccountVerified": false
+    },
+    "task_open_resource_repo": {
+      "id": "task_open_resource_repo",
+      "title": "الوصول إلى مكتبة أدوات الذكاء الاصطناعي المجانية",
+      "description": "افتح المصدر التعليمي المفتوح واستعرض البرمجيات والنماذج مفتوحة المصدر.",
+      "taskType": "OPEN_RESOURCE",
+      "platform": "Open Resource Hub",
+      "targetUrl": "https://github.com",
+      "reward": 1,
+      "xpReward": 0,
+      "estimatedMinutes": 2,
+      "instructions": [
+        "افتح المستودع التعليمي",
+        "استكشف الأدوات الموصى بها من البروفيسور",
+        "سجل إتمام المهمة للحصول على الرصيد"
+      ],
+      "status": "ACTIVE",
+      "totalCompletionsRequired": 150,
+      "currentCompletions": 8,
+      "createdAt": "2026-09-05T23:12:19.233Z",
+      "isAccountVerified": false
+    }
+  },
+  "completions": {},
+  "pointTransactions": [
+    {
+      "id": "pt_rew_1788792976257_18s5",
+      "anonymousUserId": "test_worker_1788792976256",
+      "type": "TASK_REWARD",
+      "amount": 1,
+      "balanceBefore": 50,
+      "balanceAfter": 51,
+      "description": "مكافأة إنجاز مهمة: \"حملة اختبار الإكمال المؤقتة\" (+1 نقطة)",
+      "referenceId": "comp_1788792976257_63up0",
+      "createdAt": "2026-09-07T14:56:16.257Z"
+    },
+    {
+      "id": "pt_camp_1788792976256_vebn",
+      "anonymousUserId": "creator_1788792976256",
+      "type": "CAMPAIGN_COST",
+      "amount": -50,
+      "balanceBefore": 100,
+      "balanceAfter": 50,
+      "description": "خصم تكلفة إنشاء حملة متابعين TikTok (@creator_temp) - 50 نقطة",
+      "referenceId": "camp_1788792976256_ou53v",
+      "createdAt": "2026-09-07T14:56:16.256Z"
+    },
+    {
+      "id": "pt_fcb_1788792976256_izqx",
+      "anonymousUserId": "creator_1788792976256",
+      "type": "FIRST_CAMPAIGN_BONUS",
+      "amount": 50,
+      "balanceBefore": 0,
+      "balanceAfter": 50,
+      "description": "مكافأة أول دخول لإنشاء أول حملة (50 نقطة مجانية لمرة واحدة)",
+      "createdAt": "2026-09-07T14:56:16.256Z"
+    },
+    {
+      "id": "pt_fcb_1788792976256_c3v8",
+      "anonymousUserId": "test_worker_1788792976256",
+      "type": "FIRST_CAMPAIGN_BONUS",
+      "amount": 50,
+      "balanceBefore": 0,
+      "balanceAfter": 50,
+      "description": "مكافأة أول دخول لإنشاء أول حملة (50 نقطة مجانية لمرة واحدة)",
+      "createdAt": "2026-09-07T14:56:16.256Z"
+    },
+    {
+      "id": "pt_camp_1788792976255_xph1",
+      "anonymousUserId": "test_user_stress_1788792976253",
+      "type": "CAMPAIGN_COST",
+      "amount": -50,
+      "balanceBefore": 50,
+      "balanceAfter": 0,
+      "description": "خصم تكلفة إنشاء حملة متابعين Instagram (@real_user) - 50 نقطة",
+      "referenceId": "camp_1788792976255_ey1gm",
+      "createdAt": "2026-09-07T14:56:16.255Z"
+    },
+    {
+      "id": "pt_fcb_1788792976254_rhsl",
+      "anonymousUserId": "test_user_stress_1788792976253",
+      "type": "FIRST_CAMPAIGN_BONUS",
+      "amount": 50,
+      "balanceBefore": 0,
+      "balanceAfter": 50,
+      "description": "مكافأة أول دخول لإنشاء أول حملة (50 نقطة مجانية لمرة واحدة)",
+      "createdAt": "2026-09-07T14:56:16.254Z"
+    },
+    {
+      "id": "pt_rew_1788792913905_h5ju",
+      "anonymousUserId": "test_worker_1788792913901",
+      "type": "TASK_REWARD",
+      "amount": 1,
+      "balanceBefore": 50,
+      "balanceAfter": 51,
+      "description": "مكافأة إنجاز مهمة: \"حملة اختبار الإكمال المؤقتة\" (+1 نقطة)",
+      "referenceId": "comp_1788792913905_25bf0",
+      "createdAt": "2026-09-07T14:55:13.905Z"
+    },
+    {
+      "id": "pt_camp_1788792913902_x5uj",
+      "anonymousUserId": "creator_1788792913901",
+      "type": "CAMPAIGN_COST",
+      "amount": -50,
+      "balanceBefore": 100,
+      "balanceAfter": 50,
+      "description": "خصم تكلفة إنشاء حملة متابعين TikTok (@creator_temp) - 50 نقطة",
+      "referenceId": "camp_1788792913901_wpqx7",
+      "createdAt": "2026-09-07T14:55:13.901Z"
+    },
+    {
+      "id": "pt_fcb_1788792913901_6ucw",
+      "anonymousUserId": "creator_1788792913901",
+      "type": "FIRST_CAMPAIGN_BONUS",
+      "amount": 50,
+      "balanceBefore": 0,
+      "balanceAfter": 50,
+      "description": "مكافأة أول دخول لإنشاء أول حملة (50 نقطة مجانية لمرة واحدة)",
+      "createdAt": "2026-09-07T14:55:13.901Z"
+    },
+    {
+      "id": "pt_fcb_1788792913901_l2oz",
+      "anonymousUserId": "test_worker_1788792913901",
+      "type": "FIRST_CAMPAIGN_BONUS",
+      "amount": 50,
+      "balanceBefore": 0,
+      "balanceAfter": 50,
+      "description": "مكافأة أول دخول لإنشاء أول حملة (50 نقطة مجانية لمرة واحدة)",
+      "createdAt": "2026-09-07T14:55:13.901Z"
+    },
+    {
+      "id": "pt_camp_1788792913901_aqd5",
+      "anonymousUserId": "test_user_stress_1788792913899",
+      "type": "CAMPAIGN_COST",
+      "amount": -50,
+      "balanceBefore": 50,
+      "balanceAfter": 0,
+      "description": "خصم تكلفة إنشاء حملة متابعين Instagram (@real_user) - 50 نقطة",
+      "referenceId": "camp_1788792913901_e1ued",
+      "createdAt": "2026-09-07T14:55:13.901Z"
+    },
+    {
+      "id": "pt_fcb_1788792913900_nucx",
+      "anonymousUserId": "test_user_stress_1788792913899",
+      "type": "FIRST_CAMPAIGN_BONUS",
+      "amount": 50,
+      "balanceBefore": 0,
+      "balanceAfter": 50,
+      "description": "مكافأة أول دخول لإنشاء أول حملة (50 نقطة مجانية لمرة واحدة)",
+      "createdAt": "2026-09-07T14:55:13.900Z"
+    },
+    {
+      "id": "pt_fcb_1788652267892_3oqq",
+      "anonymousUserId": "user_qr082i5q_mtp079pv",
+      "type": "FIRST_CAMPAIGN_BONUS",
+      "amount": 50,
+      "balanceBefore": 0,
+      "balanceAfter": 50,
+      "description": "مكافأة أول دخول لإنشاء أول حملة (50 نقطة مجانية لمرة واحدة)",
+      "createdAt": "2026-09-05T23:18:12.270Z"
+    }
+  ],
+  "xpTransactions": [],
+  "auditLogs": [
+    {
+      "id": "audit_1788649939256_7ap4",
+      "adminId": "user_refund_test_1788649939249",
+      "action": "CANCEL_CAMPAIGN",
+      "targetId": "camp_1788649939249_y74dv",
+      "reason": "إلغاء الحملة واسترجاع 30 نقطة للمستخدم",
+      "createdAt": "2026-09-05T23:12:19.256Z"
+    },
+    {
+      "id": "audit_1788649939255_ko2u",
+      "adminId": "system_admin",
+      "action": "APPROVE_COMPLETION",
+      "targetId": "comp_1788649939253_j592v",
+      "reason": "تم التحقق وقبول الإنجاز بنجاح",
+      "createdAt": "2026-09-05T23:12:19.255Z"
+    },
+    {
+      "id": "audit_1788649939253_72ao",
+      "adminId": "system_admin",
+      "action": "APPROVE_COMPLETION",
+      "targetId": "comp_1788649939252_vkhoh",
+      "reason": "تم التحقق وقبول الإنجاز بنجاح",
+      "createdAt": "2026-09-05T23:12:19.253Z"
+    },
+    {
+      "id": "audit_1788649939252_20sm",
+      "adminId": "system_admin",
+      "action": "APPROVE_COMPLETION",
+      "targetId": "comp_1788649939251_ec52v",
+      "reason": "تم التحقق وقبول الإنجاز بنجاح",
+      "createdAt": "2026-09-05T23:12:19.252Z"
+    },
+    {
+      "id": "audit_1788649939251_o93r",
+      "adminId": "system_admin",
+      "action": "APPROVE_COMPLETION",
+      "targetId": "comp_1788649939250_c0prh",
+      "reason": "تم التحقق وقبول الإنجاز بنجاح",
+      "createdAt": "2026-09-05T23:12:19.251Z"
+    },
+    {
+      "id": "audit_1788649939248_t0zt",
+      "adminId": "admin_test",
+      "action": "APPROVE_COMPLETION",
+      "targetId": "comp_1788649939247_5kyhh",
+      "reason": "اعتماد الإنجاز رقم 10",
+      "createdAt": "2026-09-05T23:12:19.248Z"
+    },
+    {
+      "id": "audit_1788649939246_mho5",
+      "adminId": "admin_test",
+      "action": "APPROVE_COMPLETION",
+      "targetId": "comp_1788649939245_qyoji",
+      "reason": "اعتماد الإنجاز رقم 9",
+      "createdAt": "2026-09-05T23:12:19.246Z"
+    },
+    {
+      "id": "audit_1788649939245_2soz",
+      "adminId": "admin_test",
+      "action": "APPROVE_COMPLETION",
+      "targetId": "comp_1788649939244_q7sim",
+      "reason": "اعتماد الإنجاز رقم 8",
+      "createdAt": "2026-09-05T23:12:19.245Z"
+    },
+    {
+      "id": "audit_1788649939244_8m4q",
+      "adminId": "admin_test",
+      "action": "APPROVE_COMPLETION",
+      "targetId": "comp_1788649939244_p47wr",
+      "reason": "اعتماد الإنجاز رقم 7",
+      "createdAt": "2026-09-05T23:12:19.244Z"
+    },
+    {
+      "id": "audit_1788649939243_mxef",
+      "adminId": "admin_test",
+      "action": "APPROVE_COMPLETION",
+      "targetId": "comp_1788649939243_w705t",
+      "reason": "اعتماد الإنجاز رقم 6",
+      "createdAt": "2026-09-05T23:12:19.243Z"
+    },
+    {
+      "id": "audit_1788649939242_w6x8",
+      "adminId": "admin_test",
+      "action": "APPROVE_COMPLETION",
+      "targetId": "comp_1788649939242_4by27",
+      "reason": "اعتماد الإنجاز رقم 5",
+      "createdAt": "2026-09-05T23:12:19.242Z"
+    },
+    {
+      "id": "audit_1788649939241_kd44",
+      "adminId": "admin_test",
+      "action": "APPROVE_COMPLETION",
+      "targetId": "comp_1788649939241_mku9t",
+      "reason": "اعتماد الإنجاز رقم 4",
+      "createdAt": "2026-09-05T23:12:19.241Z"
+    },
+    {
+      "id": "audit_1788649939240_jbpx",
+      "adminId": "admin_test",
+      "action": "APPROVE_COMPLETION",
+      "targetId": "comp_1788649939240_on1dq",
+      "reason": "اعتماد الإنجاز رقم 3",
+      "createdAt": "2026-09-05T23:12:19.240Z"
+    },
+    {
+      "id": "audit_1788649939239_lktd",
+      "adminId": "admin_test",
+      "action": "APPROVE_COMPLETION",
+      "targetId": "comp_1788649939239_c3syt",
+      "reason": "اعتماد الإنجاز رقم 2",
+      "createdAt": "2026-09-05T23:12:19.239Z"
+    },
+    {
+      "id": "audit_1788649939238_o90m",
+      "adminId": "admin_test",
+      "action": "APPROVE_COMPLETION",
+      "targetId": "comp_1788649939238_5b7zg",
+      "reason": "اعتماد الإنجاز رقم 1",
+      "createdAt": "2026-09-05T23:12:19.238Z"
+    }
+  ]
+}

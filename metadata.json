@@ -1,0 +1,6 @@
+{
+  "name": "بروفيسور محمد مهدي AI",
+  "description": "المنصة الذكية المتكاملة للمهام والحملات والنقاط وإدارة الإنجازات بنظام مكافآت حقيقي وقابل للتوسع",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
