@@ -49,7 +49,7 @@ export const MyProgressView: React.FC<MyProgressViewProps> = ({
         </div>
         <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500/10 border border-amber-400/30 text-xs font-bold text-amber-300">
           <Sparkles className="w-4 h-4 text-amber-400" />
-          <span>المعادلة: 50 مهمة = حملة جديدة (50 نقطة)</span>
+          <span>المعادلة: 10 مهام = حملة جديدة (10 نقاط)</span>
         </div>
       </div>
 

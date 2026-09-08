@@ -80,10 +80,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 </span>
               </div>
               <div className="text-lg font-extrabold text-white mb-1">
-                50 نقطة = حملة واحدة
+                10 نقاط = حملة واحدة
               </div>
               <p className="text-[11px] text-neutral-300">
-                إنجاز 50 مهمة (+1 نقطة) = إنشاء حملة متابعين جديدة
+                إنجاز 10 مهام (+1 نقطة) = إنشاء حملة متابعين جديدة
               </p>
               <div className="mt-2.5 inline-flex items-center gap-1 text-xs font-black text-amber-300 bg-amber-400/20 px-3 py-1 rounded-lg border border-amber-400/30 group-hover:bg-amber-400/30">
                 <span>إنشاء حملة الآن</span>

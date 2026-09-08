@@ -31,10 +31,10 @@ export default function App() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [myCampaigns, setMyCampaigns] = useState<Campaign[]>([]);
 
-  // Points & Ledger State
+  // Points & Ledger State (dynamically fetched from server per user)
   const [pointsOverview, setPointsOverview] = useState({
-    currentPoints: 50,
-    earnedTotal: 50,
+    currentPoints: 0,
+    earnedTotal: 0,
     spentTotal: 0,
     lockedCampaignBudget: 0,
     transactionsCount: 0,
@@ -150,6 +150,7 @@ export default function App() {
   const handleTaskSubmitted = (completion: any) => {
     setSelectedTask(null);
     loadUserData();
+    loadPointsLedger();
   };
 
   const handleBonusClaimed = (updatedUser: AnonymousUser, pts: number, xp: number) => {

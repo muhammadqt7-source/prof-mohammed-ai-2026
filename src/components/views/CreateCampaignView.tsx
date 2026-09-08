@@ -56,9 +56,9 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
 
   const verifyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Business Rule: 50 Points = 1 Campaign (50 followers at 1 point reward each)
-  const FIXED_CAMPAIGN_COST = 50;
-  const FIXED_TARGET_COMPLETIONS = 50;
+  // Business Rule: 10 Points = 1 Campaign (10 followers at 1 point reward each)
+  const FIXED_CAMPAIGN_COST = 10;
+  const FIXED_TARGET_COMPLETIONS = 10;
   const FIXED_REWARD_PER_COMPLETION = 1;
 
   const currentBalance = user?.points || 0;
@@ -152,7 +152,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
     }
 
     if (isInsufficientBalance) {
-      setErrorMessage('تحتاج إلى 50 نقطة لإنشاء حملة.');
+      setErrorMessage('تحتاج إلى 10 نقاط لإنشاء حملة.');
       return;
     }
 
@@ -186,7 +186,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
         onCampaignCreated(res.campaign, res.userBalance);
       }, 1200);
     } catch (err: any) {
-      setErrorMessage(err.message || 'تحتاج إلى 50 نقطة لإنشاء حملة.');
+      setErrorMessage(err.message || 'تحتاج إلى 10 نقاط لإنشاء حملة.');
     } finally {
       setLoading(false);
     }
@@ -199,7 +199,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold gold-gradient-text">إنشاء حملة متابعين جديدة</h1>
           <p className="text-xs sm:text-sm text-neutral-300 mt-1">
-            اختر منصتك وضع اسم المستخدم. تكلفة الحملة ثابتة: 50 نقطة تمنحك 50 متابع حقيقي (+1 نقطة لكل متابع).
+            اختر منصتك وضع اسم المستخدم. تكلفة الحملة ثابتة: 10 نقاط تمنحك 10 متابعين حقيقيين (+1 نقطة لكل متابع).
           </p>
         </div>
         <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-amber-500/10 border border-amber-400/30">
@@ -235,18 +235,18 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                 </div>
               </div>
               <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/40">
-                50 نقطة
+                10 نقاط
               </span>
             </div>
 
             <p className="text-xs text-neutral-300 leading-relaxed">
-              زيادة 50 متابع حقيقي لحسابك على TikTok. يدخل المستخدمون إلى حسابك يدوياً ويقومون بالمتابعة للحصول على +1 نقطة.
+              زيادة 10 متابعين حقيقيين لحسابك على TikTok. يدخل المستخدمون إلى حسابك يدوياً ويقومون بالمتابعة للحصول على +1 نقطة.
             </p>
 
             <div className="mt-3 pt-3 border-t border-neutral-800/80 flex items-center justify-between text-[11px] text-neutral-400">
               <span className="flex items-center gap-1">
                 <Users className="w-3.5 h-3.5 text-amber-400" />
-                <span>الهدف: 50 متابع</span>
+                <span>الهدف: 10 متابعين</span>
               </span>
               <span className="text-emerald-400 font-bold">+1 نقطة / متابع</span>
             </div>
@@ -272,18 +272,18 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
                 </div>
               </div>
               <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/40">
-                50 نقطة
+                10 نقاط
               </span>
             </div>
 
             <p className="text-xs text-neutral-300 leading-relaxed">
-              زيادة 50 متابع حقيقي لحسابك على Instagram. يدخل المستخدمون إلى حسابك يدوياً ويقومون بالمتابعة للحصول على +1 نقطة.
+              زيادة 10 متابعين حقيقيين لحسابك على Instagram. يدخل المستخدمون إلى حسابك يدوياً ويقومون بالمتابعة للحصول على +1 نقطة.
             </p>
 
             <div className="mt-3 pt-3 border-t border-neutral-800/80 flex items-center justify-between text-[11px] text-neutral-400">
               <span className="flex items-center gap-1">
                 <Users className="w-3.5 h-3.5 text-amber-400" />
-                <span>الهدف: 50 متابع</span>
+                <span>الهدف: 10 متابعين</span>
               </span>
               <span className="text-emerald-400 font-bold">+1 نقطة / متابع</span>
             </div>
@@ -303,15 +303,15 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
         </div>
       </div>
 
-      {/* Real-time Calculation Panel: Fixed 50 Points */}
+      {/* Real-time Calculation Panel: Fixed 10 Points */}
       <div className="rounded-2xl glass-panel p-5 gold-metallic-border space-y-4">
         <div className="flex items-center justify-between border-b border-neutral-800 pb-3">
           <span className="text-xs font-bold text-neutral-300 flex items-center gap-1.5">
             <Sparkles className="w-4 h-4 text-amber-400" />
-            <span>المعادلة الاقتصادية: 50 نقطة = حملة واحدة (50 متابع)</span>
+            <span>المعادلة الاقتصادية: 10 نقاط = حملة واحدة (10 متابعين)</span>
           </span>
           <span className="text-xs text-amber-400/80 font-mono">
-            50 متابع × 1 نقطة لكل إنجاز = 50 نقطة
+            10 متابعين × 1 نقطة لكل إنجاز = 10 نقاط
           </span>
         </div>
 
@@ -327,7 +327,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
           <div className="bg-amber-500/10 p-3 rounded-xl border border-amber-400/30 text-center">
             <span className="text-xs text-amber-300 font-semibold">تكلفة إنشاء الحملة</span>
             <div className="text-xl font-black text-amber-400 mt-0.5">
-              50 <span className="text-xs font-normal text-amber-300/80">نقطة</span>
+              10 <span className="text-xs font-normal text-amber-300/80">نقطة</span>
             </div>
           </div>
 
@@ -343,7 +343,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
             </span>
             <div className="text-xl font-extrabold mt-0.5">
               {isInsufficientBalance
-                ? `${50 - currentBalance} نقطة مطلوبة`
+                ? `${10 - currentBalance} نقطة مطلوبة`
                 : `${balanceAfter.toLocaleString()} نقطة`}
             </div>
           </div>
@@ -354,7 +354,7 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
           <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs font-semibold">
             <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
             <span>
-              تحتاج إلى 50 نقطة لإنشاء حملة. رصيدك الحالي {currentBalance} نقطة. أنجز المهام لكسب +1 نقطة عن كل مهمة!
+              تحتاج إلى 10 نقاط لإنشاء حملة. رصيدك الحالي {currentBalance} نقطة. أنجز المهام لكسب +1 نقطة عن كل مهمة!
             </span>
           </div>
         )}
@@ -508,11 +508,11 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
           </div>
         )}
 
-        {/* Campaign Parameters Overview (Fixed 50 completions & 1 point reward) */}
+        {/* Campaign Parameters Overview (Fixed 10 completions & 1 point reward) */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 rounded-xl bg-neutral-950/60 border border-neutral-800 text-center">
           <div>
             <span className="text-[10px] text-neutral-400 block">المتابعين المطلوبين</span>
-            <span className="text-sm font-black text-amber-300">50 متابع</span>
+            <span className="text-sm font-black text-amber-300">10 متابعين</span>
           </div>
           <div>
             <span className="text-[10px] text-neutral-400 block">المكافأة لكل متابع</span>
@@ -555,10 +555,10 @@ export const CreateCampaignView: React.FC<CreateCampaignViewProps> = ({
             <Layers className="w-4 h-4" />
             <span>
               {loading
-                ? 'جار إنشاء الحملة وخصم 50 نقطة...'
+                ? 'جار إنشاء الحملة وخصم 10 نقاط...'
                 : isInsufficientBalance
-                ? 'تحتاج إلى 50 نقطة لإنشاء حملة'
-                : 'إنشاء حملة متابعين وخصم 50 نقطة'}
+                ? 'تحتاج إلى 10 نقاط لإنشاء حملة'
+                : 'إنشاء حملة متابعين وخصم 10 نقاط'}
             </span>
           </button>
         </div>

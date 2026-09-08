@@ -9,27 +9,46 @@ import {
 } from '../types.js';
 
 const STORAGE_KEY = 'pm_ai_anonymous_user_id';
+let inMemoryUserId: string | null = null;
 
 export function getAnonymousUserId(): string {
   if (typeof window === 'undefined') return 'user_ssr';
-  let id = localStorage.getItem(STORAGE_KEY);
-  if (!id || id.trim() === '') {
-    id = 'user_' + Math.random().toString(36).substring(2, 10) + '_' + Date.now().toString(36);
-    localStorage.setItem(STORAGE_KEY, id);
+  try {
+    let id = localStorage.getItem(STORAGE_KEY);
+    if (!id || id.trim() === '') {
+      id = 'user_' + Math.random().toString(36).substring(2, 10) + '_' + Date.now().toString(36);
+      try {
+        localStorage.setItem(STORAGE_KEY, id);
+      } catch (e) {
+        // Safe fallback for restricted storage environments
+      }
+    }
+    return id;
+  } catch (err) {
+    if (!inMemoryUserId) {
+      inMemoryUserId = 'user_' + Math.random().toString(36).substring(2, 10) + '_' + Date.now().toString(36);
+    }
+    return inMemoryUserId;
   }
-  return id;
 }
 
 export function setCustomAnonymousUserId(newId: string) {
   if (typeof window !== 'undefined' && newId.trim()) {
-    localStorage.setItem(STORAGE_KEY, newId.trim());
+    try {
+      localStorage.setItem(STORAGE_KEY, newId.trim());
+    } catch (e) {
+      inMemoryUserId = newId.trim();
+    }
   }
 }
 
 export function resetAnonymousUserId(): string {
   if (typeof window !== 'undefined') {
-    localStorage.removeItem(STORAGE_KEY);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {}
   }
+  inMemoryUserId = null;
   return getAnonymousUserId();
 }
 

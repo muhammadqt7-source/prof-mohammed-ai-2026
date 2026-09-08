@@ -214,31 +214,15 @@ class TransactionalDatabase {
         userModified = true;
       }
 
-      // Sanitize points: If user had legacy 120 / 100 / 200 points, or if new user:
-      if (user.campaignsCreatedCount === 0 && user.completedTasksCount === 0) {
-        if (user.points !== 50 || !user.firstCampaignBonusGranted) {
-          user.points = 50;
-          user.firstCampaignBonusGranted = true;
-          userModified = true;
-        }
-      } else {
-        // Legitimate user who participated:
-        // Starting 50 points + approved completions (+1 point each) - campaign costs (50 each) + refunds
-        const earnedTaskPoints = userApprovedCompletions.length * 1;
-        const userCampaigns = Object.values(this.data.campaigns).filter(
-          (c) => c.anonymousUserId === user.id
-        );
-        const campaignCostTotal = userCampaigns.length * 50;
-        const refunds = this.data.pointTransactions
-          .filter((pt) => pt.anonymousUserId === user.id && pt.type === 'CAMPAIGN_REFUND')
-          .reduce((sum, pt) => sum + pt.amount, 0);
-
-        const expectedPoints = Math.max(0, 50 + earnedTaskPoints - campaignCostTotal + refunds);
-        if (user.points !== expectedPoints || !user.firstCampaignBonusGranted) {
-          user.points = expectedPoints;
-          user.firstCampaignBonusGranted = true;
-          userModified = true;
-        }
+      // Sanitize legacy points: If user had legacy 120 / 100 / 50 points:
+      if (!user.firstCampaignBonusGranted) {
+        user.points = 10;
+        user.firstCampaignBonusGranted = true;
+        userModified = true;
+      } else if (user.points > 10 && (user.completedTasksCount || 0) === 0) {
+        // Reset old legacy balances (e.g. 50 or 120) for users who never did tasks
+        user.points = 10;
+        userModified = true;
       }
 
       if (userModified) {
@@ -259,7 +243,7 @@ class TransactionalDatabase {
       modified = true;
     }
 
-    // Ensure every user has a FIRST_CAMPAIGN_BONUS transaction of 50 points
+    // Ensure every user has a FIRST_CAMPAIGN_BONUS transaction of 10 points
     for (const user of Object.values(this.data.users)) {
       const hasBonusTx = this.data.pointTransactions.some(
         (pt) => pt.anonymousUserId === user.id && pt.type === 'FIRST_CAMPAIGN_BONUS'
@@ -269,10 +253,10 @@ class TransactionalDatabase {
           id: 'pt_fcb_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
           anonymousUserId: user.id,
           type: 'FIRST_CAMPAIGN_BONUS',
-          amount: 50,
+          amount: 10,
           balanceBefore: 0,
-          balanceAfter: 50,
-          description: 'مكافأة أول دخول لإنشاء أول حملة (50 نقطة مجانية لمرة واحدة)',
+          balanceAfter: 10,
+          description: 'مكافأة أول دخول للتطبيق (10 نقاط مجانية لمرة واحدة فقط)',
           createdAt: user.createdAt || new Date().toISOString(),
         });
         modified = true;
@@ -374,7 +358,7 @@ class TransactionalDatabase {
     }
 
     if (modified) {
-      console.log('🔄 Database migration and sanitization complete: Points reset to 50, XP reset to 0.');
+      console.log('🔄 Database migration and sanitization complete: Points reset to 10, XP reset to 0.');
       this.persist();
     }
   }
@@ -519,10 +503,10 @@ class TransactionalDatabase {
 
       const user = this.data.users[userId];
 
-      // First-time entry bonus: Exactly 50 points (cost of 1 campaign) and 0 XP
+      // First-time entry bonus: Exactly 10 points (cost of 1 campaign) and 0 XP
       // Strictly granted once using server-side firstCampaignBonusGranted lock
       if (!user.firstCampaignBonusGranted) {
-        const bonusAmount = 50;
+        const bonusAmount = 10;
         const balanceBefore = user.points || 0;
         const balanceAfter = balanceBefore + bonusAmount;
         user.points = balanceAfter;
@@ -541,7 +525,7 @@ class TransactionalDatabase {
           amount: bonusAmount,
           balanceBefore,
           balanceAfter,
-          description: 'مكافأة أول دخول لإنشاء أول حملة (50 نقطة مجانية لمرة واحدة)',
+          description: 'مكافأة أول دخول للتطبيق (10 نقاط مجانية لمرة واحدة فقط)',
           createdAt: new Date().toISOString(),
         });
       }
@@ -582,12 +566,12 @@ class TransactionalDatabase {
     return this.transaction(() => {
       const user = this.getOrCreateUser(userId);
 
-      const CAMPAIGN_FIXED_COST = 50;
+      const CAMPAIGN_FIXED_COST = 10;
 
-      // Server check: user must have at least 50 points
-      // Equation: newBalance = currentBalance - 50
+      // Server check: user must have at least 10 points
+      // Equation: newBalance = currentBalance - 10
       if (user.points < CAMPAIGN_FIXED_COST) {
-        throw new Error('تحتاج إلى 50 نقطة لإنشاء حملة.');
+        throw new Error('تحتاج إلى 10 نقاط لإنشاء حملة.');
       }
 
       // Validate and normalize platform (Instagram or TikTok only)
@@ -642,8 +626,11 @@ class TransactionalDatabase {
 
       const balanceBefore = user.points;
       const balanceAfter = balanceBefore - CAMPAIGN_FIXED_COST;
+      if (balanceAfter < 0) {
+        throw new Error('لا يمكن أن يصبح رصيد المستخدم سالباً');
+      }
 
-      // Deduct exactly 50 points immediately
+      // Deduct exactly 10 points immediately
       user.points = balanceAfter;
       user.campaignsCreatedCount = (user.campaignsCreatedCount || 0) + 1;
       user.updatedAt = new Date().toISOString();
@@ -653,8 +640,8 @@ class TransactionalDatabase {
       const durationMinutes = Math.floor(Number(params.durationMinutes)) || 1440;
       const expiresAt = new Date(now.getTime() + durationMinutes * 60 * 1000).toISOString();
 
-      // Economic model: 50 points = 50 completions (followers) at 1 point reward each
-      const targetCompletions = 50;
+      // Economic model: 10 points = 10 completions (followers) at 1 point reward each
+      const targetCompletions = 10;
       const rewardPerCompletion = 1;
 
       const campaignTitle =
@@ -744,7 +731,7 @@ class TransactionalDatabase {
         amount: -CAMPAIGN_FIXED_COST,
         balanceBefore,
         balanceAfter,
-        description: `خصم تكلفة إنشاء حملة متابعين ${normalizedPlatform} (@${cleanUsername}) - 50 نقطة`,
+        description: `خصم تكلفة إنشاء حملة متابعين ${normalizedPlatform} (@${cleanUsername}) - 10 نقاط`,
         referenceId: campaignId,
         createdAt: now.toISOString(),
       });

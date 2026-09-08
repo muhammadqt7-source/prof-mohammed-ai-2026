@@ -309,12 +309,12 @@ const createCampaignSchema = z.object({
   targetUrl: z.string().optional().nullable(),
   isAccountVerified: z.boolean().optional().nullable(),
   targetAccountVerified: z.boolean().optional().nullable(),
-  targetCompletions: z.number().int().optional().default(50),
+  targetCompletions: z.number().int().optional().default(10),
   rewardPerCompletion: z.number().int().optional().default(1),
   durationMinutes: z.number().int().min(5, 'المدة يجب أن تكون 5 دقائق على الأقل').default(1440),
 });
 
-// Sensitive Rate-Limited + Mutex Locked Campaign Creation (Atomically deducts 50 points)
+// Sensitive Rate-Limited + Mutex Locked Campaign Creation (Atomically deducts 10 points)
 apiRouter.post('/campaigns', sensitiveOpsLimiter, async (req: Request, res: Response) => {
   try {
     const userId = getUserId(req);
@@ -373,9 +373,12 @@ apiRouter.post('/campaigns', sensitiveOpsLimiter, async (req: Request, res: Resp
       });
     });
 
+    // Invalidate caches immediately
+    appCache.invalidateTags(['user:' + userId, 'campaigns', 'tasks']);
+
     res.json({
       success: true,
-      message: 'تم إنشاء الحملة وخصم 50 نقطة فورياً بنجاح',
+      message: 'تم إنشاء الحملة وخصم 10 نقاط فورياً بنجاح',
       campaign,
       userBalance: user.points,
     });
@@ -403,6 +406,7 @@ apiRouter.post('/campaigns/:id/cancel', (req: Request, res: Response) => {
     const userId = getUserId(req);
     const campaign = db.cancelCampaign(req.params.id, userId);
     const user = db.getOrCreateUser(userId);
+    appCache.invalidateTags(['user:' + userId, 'campaigns', 'tasks']);
     res.json({
       success: true,
       message: 'تم إلغاء الحملة واسترجاع الميزانية المتبقية إلى رصيدك',
@@ -435,19 +439,11 @@ apiRouter.get('/my-campaigns', (req: Request, res: Response) => {
   }
 });
 
-// 5. Points & History API with Caching
+// 5. Points & History API (Always real-time, zero stale cache)
 apiRouter.get('/points', (req: Request, res: Response) => {
   try {
     const userId = getUserId(req);
-    const cacheKey = `points-overview:${userId}`;
-
-    const cached = appCache.get<any>(cacheKey);
-    if (cached) {
-      return res.json(cached);
-    }
-
     const overview = db.getPointsOverview(userId);
-    appCache.set(cacheKey, overview, 3000, ['points:' + userId, 'user:' + userId]);
     res.json(overview);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -459,17 +455,8 @@ apiRouter.get('/points/history', (req: Request, res: Response) => {
     const userId = getUserId(req);
     const page = req.query.page ? parseInt(req.query.page as string, 10) : undefined;
     const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : undefined;
-    const cacheKey = `points-history:${userId}:${page || 'all'}:${limit || 'all'}`;
-
-    const cached = appCache.get<any>(cacheKey);
-    if (cached) {
-      return res.json(cached);
-    }
-
     const transactions = db.getUserPointTransactions(userId, page, limit);
-    const responsePayload = { transactions };
-    appCache.set(cacheKey, responsePayload, 3000, ['points:' + userId, 'user:' + userId]);
-    res.json(responsePayload);
+    res.json({ transactions });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

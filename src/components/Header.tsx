@@ -138,10 +138,10 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-amber-400/20 border-amber-400 text-amber-300'
                 : 'bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20 hover:border-amber-400'
             }`}
-            title="إنشاء حملة متابعين (50 نقطة)"
+            title="إنشاء حملة متابعين (10 نقاط)"
           >
             <PlusCircle className="w-4 h-4 text-amber-400" />
-            <span className="hidden sm:inline">حملة (50ن)</span>
+            <span className="hidden sm:inline">حملة (10ن)</span>
           </button>
 
           {/* Real Server Points Pill */}
@@ -155,7 +155,7 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
             <div className="flex flex-col text-right">
               <span className="text-xs sm:text-sm font-extrabold text-amber-300 tracking-tight">
-                {user ? user.points.toLocaleString() : '0'}
+                {user !== null ? user.points.toLocaleString() : '...'}
               </span>
               <span className="text-[9px] text-amber-200/50 leading-none">نقطة</span>
             </div>

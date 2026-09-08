@@ -92,13 +92,13 @@ async function runTests() {
   try {
     const testUserId = `test_user_stress_${Date.now()}`;
     const user = db.getOrCreateUser(testUserId);
-    user.points = 50; // Exactly 50 points (cost of 1 campaign)
+    user.points = 10; // Exactly 10 points (cost of 1 campaign)
     user.firstCampaignBonusGranted = true;
 
     let successfulCreations = 0;
     let failedCreations = 0;
 
-    // Attempt 3 simultaneous campaign creations with only 50 points
+    // Attempt 3 simultaneous campaign creations with only 10 points
     const promises = Array.from({ length: 3 }).map(async () => {
       try {
         db.createCampaign(testUserId, {
@@ -106,7 +106,7 @@ async function runTests() {
           platform: 'Instagram',
           targetUsername: 'real_user',
           targetProfileUrl: 'https://instagram.com/real_user',
-          targetCompletions: 50,
+          targetCompletions: 10,
           rewardPerCompletion: 1,
         });
         successfulCreations++;
@@ -158,7 +158,7 @@ async function runTests() {
       platform: 'TikTok',
       targetUsername: 'creator_temp',
       targetProfileUrl: 'https://tiktok.com/@creator_temp',
-      targetCompletions: 50,
+      targetCompletions: 10,
       rewardPerCompletion: 1,
     });
 
@@ -189,8 +189,8 @@ async function runTests() {
     );
 
     const worker = db.getUser(workerUserId);
-    // Worker starts with 50 points, should only gain 1 point = 51 points
-    const isStrictlyIdempotent = completionsGranted === 1 && duplicateRejected === 4 && worker?.points === 51;
+    // Worker starts with 10 points, should only gain 1 point = 11 points
+    const isStrictlyIdempotent = completionsGranted === 1 && duplicateRejected === 4 && worker?.points === 11;
 
     // Clean up temporary test campaign, task, and users
     db.deleteCampaign(campaign.id);
@@ -201,7 +201,7 @@ async function runTests() {
       testName: 'Task Completion Idempotency & Unique Constraint',
       category: 'Points & Tasks',
       status: isStrictlyIdempotent ? 'PASS' : 'FAIL',
-      details: `Granted: ${completionsGranted}, Duplicates Rejected: ${duplicateRejected}, Final Points: ${worker?.points} (Expected 51).`,
+      details: `Granted: ${completionsGranted}, Duplicates Rejected: ${duplicateRejected}, Final Points: ${worker?.points} (Expected 11).`,
     });
   } catch (err: any) {
     results.push({

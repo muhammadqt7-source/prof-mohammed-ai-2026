@@ -41,7 +41,7 @@ export const TasksView: React.FC<TasksViewProps> = ({ tasks, onSelectTask }) => 
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold gold-gradient-text">قائمة المهام المتاحة</h1>
           <p className="text-xs sm:text-sm text-neutral-300 mt-1">
-            أنجز المهام المتاحة واكسب +1 نقطة عن كل مهمة مكتملة ومعتمدة. كل 50 نقطة تمكنك من إنشاء حملة متابعين جديدة!
+            أنجز المهام المتاحة واكسب +1 نقطة عن كل مهمة مكتملة ومعتمدة. كل 10 نقاط تمكنك من إنشاء حملة متابعين جديدة!
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs text-neutral-400 bg-neutral-900/60 px-3 py-1.5 rounded-xl border border-neutral-800">
