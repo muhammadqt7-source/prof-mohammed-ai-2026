@@ -16,6 +16,7 @@ import { TaskDetailsModal } from './components/views/TaskDetailsModal.js';
 import { DEFAULT_THEME_CONFIG, ThemeConfig } from './config/theme.js';
 import { AnonymousUser, Campaign, PointTransaction, Task } from './types.js';
 import { api, getAnonymousUserId } from './services/api.js';
+import { initLiveUpdateSync } from './services/liveUpdateSync.js';
 
 const THEME_STORAGE_KEY = 'pm_ai_theme_config';
 
@@ -126,6 +127,10 @@ export default function App() {
   useEffect(() => {
     loadUserData();
     loadPointsLedger();
+    const cleanupSync = initLiveUpdateSync();
+    return () => {
+      cleanupSync();
+    };
   }, [loadUserData, loadPointsLedger]);
 
   // Handle updates from components

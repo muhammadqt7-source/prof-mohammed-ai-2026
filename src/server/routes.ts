@@ -8,24 +8,85 @@ import { appCache } from './cache.js';
 import { checkPostgresHealth } from './db/postgres.js';
 import { checkRedisHealth } from './redis/redisClient.js';
 import { appQueue } from './queue/queue.js';
+import { generateContentSafe } from './gemini.js';
 
 export const apiRouter = Router();
 
 // Apply global rate limiting across all API endpoints (Protection against DDoS and scraping)
 apiRouter.use(globalLimiter);
 
-// Middleware to extract anonymousUserId from header or query
-function getUserId(req: Request): string {
-  const headerId = req.headers['x-anonymous-user-id'];
-  if (typeof headerId === 'string' && headerId.trim()) {
-    return headerId.trim();
+function isValidUserId(id: unknown): id is string {
+  if (typeof id !== 'string') return false;
+  const trimmed = id.trim();
+  if (trimmed.length < 4) return false;
+  if (trimmed === 'user_default' || trimmed === 'undefined' || trimmed === 'null' || trimmed === 'user_ssr') {
+    return false;
   }
-  const queryId = req.query.anonymousUserId;
-  if (typeof queryId === 'string' && queryId.trim()) {
-    return queryId.trim();
-  }
-  return 'user_default';
+  return true;
 }
+
+// Middleware to extract anonymousUserId from header, query, body, or cookie
+// Strictly isolated per client - NEVER returns a shared 'user_default'
+function getUserId(req: Request, res?: Response): string {
+  // 1. Check custom headers
+  const headerId = req.headers['x-anonymous-user-id'] || req.headers['x-user-id'];
+  if (isValidUserId(headerId)) {
+    const cleanId = (headerId as string).trim();
+    if (res) res.setHeader('x-anonymous-user-id', cleanId);
+    return cleanId;
+  }
+
+  // 2. Check query params
+  const queryId = req.query.anonymousUserId || req.query.userId;
+  if (isValidUserId(queryId)) {
+    const cleanId = (queryId as string).trim();
+    if (res) res.setHeader('x-anonymous-user-id', cleanId);
+    return cleanId;
+  }
+
+  // 3. Check JSON body
+  if (req.body && isValidUserId(req.body.anonymousUserId)) {
+    const cleanId = (req.body.anonymousUserId as string).trim();
+    if (res) res.setHeader('x-anonymous-user-id', cleanId);
+    return cleanId;
+  }
+
+  // 4. Check cookies
+  const cookieHeader = req.headers.cookie;
+  if (cookieHeader) {
+    const match = cookieHeader.match(/pm_ai_anonymous_user_id=([^;]+)/);
+    if (match && match[1] && isValidUserId(decodeURIComponent(match[1].trim()))) {
+      const cleanId = decodeURIComponent(match[1].trim());
+      if (res) res.setHeader('x-anonymous-user-id', cleanId);
+      return cleanId;
+    }
+  }
+
+  // 5. Fallback: NEVER return a single shared 'user_default'!
+  // Generate a distinct unique anonymous ID for this client so users never collide
+  const generatedId = 'user_' + Math.random().toString(36).substring(2, 10) + '_' + Date.now().toString(36);
+  if (res) {
+    res.setHeader('x-anonymous-user-id', generatedId);
+  }
+  return generatedId;
+}
+
+// Live Deployment Build & Version Metadata
+export const APP_DEPLOYMENT_METADATA = {
+  buildId: process.env.BUILD_ID || `build_${Date.now()}`,
+  version: '1.0.0',
+  deployedAt: new Date().toISOString(),
+  environment: process.env.NODE_ENV || 'production',
+};
+
+// 0. Version & Deployment Sync API (Anti-Cache)
+apiRouter.get('/version', (_req: Request, res: Response) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0, post-check=0, pre-check=0');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.setHeader('Surrogate-Control', 'no-store');
+  res.json(APP_DEPLOYMENT_METADATA);
+});
 
 // 1. Health API (Multi-Service Production Health Check)
 apiRouter.get('/health', async (_req: Request, res: Response) => {
@@ -88,6 +149,53 @@ apiRouter.get('/telemetry/metrics', async (_req: Request, res: Response) => {
     });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// AI Assistant & Chat API (Robust Gemini Integration with Retry, Backoff, Timeout, & Cache)
+apiRouter.post('/chat', async (req: Request, res: Response) => {
+  try {
+    const { message, prompt } = req.body || {};
+    const userQuery = (message || prompt || '').trim();
+
+    if (!userQuery) {
+      return res.status(400).json({ error: 'الرجاء إرسال نص الرسالة أو السؤال.' });
+    }
+
+    if (!process.env.GEMINI_API_KEY) {
+      return res.json({
+        reply:
+          'مرحباً بك في منصة بروفيسور محمد مهدي AI! المنصة تعمل بكفاءة تامة، ويمكنك استكشاف المهام المتوفرة، وإنشاء حملات حقيقية للمتابعين، وكسب النقاط فورياً.',
+        fallback: true,
+        status: 'AI_KEY_NOT_CONFIGURED',
+      });
+    }
+
+    const systemPrompt = `أنت المساعد الذكي التابع لمنصة بروفيسور محمد مهدي AI (Professor Mohammad Mahdi AI).
+المنصة متخصصة في الذكاء الاصطناعي، المهام التفاعلية، حملات زيادة المتابعين الحقيقيين (+10 متابعين لكل حملة بتكلفة 10 نقاط)، ونظام النقاط المحكم (+1 نقطة لكل مهمة منجزة).
+أجب بلباقة واحترافية عالية باللغة العربية، وكن مفيداً وواضحاً وموجزاً.`;
+
+    const fullPrompt = `${systemPrompt}\n\nسؤال المستخدم: ${userQuery}\n\nالإجابة:`;
+
+    const reply = await generateContentSafe({
+      prompt: fullPrompt,
+      model: 'gemini-2.5-flash',
+      cacheTtlSeconds: 1800,
+    });
+
+    res.json({
+      reply: reply.trim(),
+      fallback: false,
+      status: 'SUCCESS',
+    });
+  } catch (err: any) {
+    console.error('Error in /api/chat:', err);
+    res.json({
+      reply:
+        'مرحباً بك! أنا مساعد منصة بروفيسور محمد مهدي AI. المنصة تعمل بكامل طاقتها وجاهزة لإنجاز المهام وإنشاء الحملات الذكية.',
+      fallback: true,
+      error: err.message,
+    });
   }
 });
 
@@ -638,3 +746,13 @@ apiRouter.get('/admin/users', (req: Request, res: Response) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// Global Fallback API Error Handler (Prevents server crash on unhandled route errors)
+apiRouter.use((err: any, _req: Request, res: Response, _next: Function) => {
+  console.error('[API Error]:', err);
+  const status = typeof err.status === 'number' && err.status >= 400 && err.status < 600 ? err.status : 500;
+  res.status(status).json({
+    error: err.message || 'حدث خطأ غير متوقع في معالجة الطلب',
+  });
+});
+

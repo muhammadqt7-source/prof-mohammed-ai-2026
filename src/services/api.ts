@@ -9,36 +9,75 @@ import {
 } from '../types.js';
 
 const STORAGE_KEY = 'pm_ai_anonymous_user_id';
+const PROD_API_BASE = 'https://ais-pre-7z7jrxyafwqfvjsdtxocqr-838145071042.europe-west2.run.app';
 let inMemoryUserId: string | null = null;
+
+function isValidStoredId(id: string | null | undefined): boolean {
+  if (!id || typeof id !== 'string') return false;
+  const trimmed = id.trim();
+  if (trimmed.length < 5) return false;
+  if (trimmed === 'user_default' || trimmed === 'undefined' || trimmed === 'null' || trimmed === 'user_ssr') {
+    return false;
+  }
+  return true;
+}
+
+function generateNewUserId(): string {
+  return 'user_' + Math.random().toString(36).substring(2, 10) + '_' + Date.now().toString(36);
+}
 
 export function getAnonymousUserId(): string {
   if (typeof window === 'undefined') return 'user_ssr';
   try {
     let id = localStorage.getItem(STORAGE_KEY);
-    if (!id || id.trim() === '') {
-      id = 'user_' + Math.random().toString(36).substring(2, 10) + '_' + Date.now().toString(36);
-      try {
-        localStorage.setItem(STORAGE_KEY, id);
-      } catch (e) {
-        // Safe fallback for restricted storage environments
+    if (!isValidStoredId(id)) {
+      // Also check cookie
+      if (typeof document !== 'undefined' && document.cookie) {
+        const match = document.cookie.match(/pm_ai_anonymous_user_id=([^;]+)/);
+        if (match && match[1] && isValidStoredId(decodeURIComponent(match[1].trim()))) {
+          id = decodeURIComponent(match[1].trim());
+        }
       }
     }
+
+    if (!isValidStoredId(id)) {
+      id = generateNewUserId();
+      try {
+        localStorage.setItem(STORAGE_KEY, id);
+      } catch {
+        // Safe fallback for restricted private browsing or WebView storage
+      }
+    }
+
+    // Keep cookie synchronized as redundant backup for proxies & WebViews
+    if (typeof document !== 'undefined' && id) {
+      try {
+        document.cookie = `pm_ai_anonymous_user_id=${encodeURIComponent(id)}; path=/; max-age=31536000; SameSite=Lax`;
+      } catch {}
+    }
+
+    inMemoryUserId = id;
     return id;
   } catch (err) {
-    if (!inMemoryUserId) {
-      inMemoryUserId = 'user_' + Math.random().toString(36).substring(2, 10) + '_' + Date.now().toString(36);
+    if (!isValidStoredId(inMemoryUserId)) {
+      inMemoryUserId = generateNewUserId();
     }
-    return inMemoryUserId;
+    return inMemoryUserId!;
   }
 }
 
 export function setCustomAnonymousUserId(newId: string) {
-  if (typeof window !== 'undefined' && newId.trim()) {
+  if (typeof window !== 'undefined' && isValidStoredId(newId)) {
+    const cleanId = newId.trim();
     try {
-      localStorage.setItem(STORAGE_KEY, newId.trim());
-    } catch (e) {
-      inMemoryUserId = newId.trim();
+      localStorage.setItem(STORAGE_KEY, cleanId);
+    } catch {}
+    if (typeof document !== 'undefined') {
+      try {
+        document.cookie = `pm_ai_anonymous_user_id=${encodeURIComponent(cleanId)}; path=/; max-age=31536000; SameSite=Lax`;
+      } catch {}
     }
+    inMemoryUserId = cleanId;
   }
 }
 
@@ -46,22 +85,65 @@ export function resetAnonymousUserId(): string {
   if (typeof window !== 'undefined') {
     try {
       localStorage.removeItem(STORAGE_KEY);
-    } catch (e) {}
+    } catch {}
+    if (typeof document !== 'undefined') {
+      try {
+        document.cookie = 'pm_ai_anonymous_user_id=; path=/; max-age=0; SameSite=Lax';
+      } catch {}
+    }
   }
   inMemoryUserId = null;
   return getAnonymousUserId();
 }
 
+function resolveApiUrl(endpoint: string, userId: string): string {
+  let base = '';
+  // If running in an APK wrapper (file:// or non-http protocol), target the production backend URL
+  if (
+    typeof window !== 'undefined' &&
+    (window.location.protocol === 'file:' || !window.location.origin || window.location.origin === 'null')
+  ) {
+    base = PROD_API_BASE;
+  }
+
+  const url = `${base}${endpoint}`;
+  // Append anonymousUserId to query string to ensure it survives proxies, headers stripping, and webviews
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}anonymousUserId=${encodeURIComponent(userId)}`;
+}
+
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const userId = getAnonymousUserId();
+  const url = resolveApiUrl(endpoint, userId);
+
   const headers = new Headers(options.headers || {});
   headers.set('Content-Type', 'application/json');
   headers.set('x-anonymous-user-id', userId);
+  headers.set('X-Anonymous-User-Id', userId);
 
-  const res = await fetch(endpoint, {
+  // If request has JSON body and is an object, also inject anonymousUserId into the body payload
+  let body = options.body;
+  if (body && typeof body === 'string' && options.method && options.method !== 'GET') {
+    try {
+      const parsed = JSON.parse(body);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        parsed.anonymousUserId = userId;
+        body = JSON.stringify(parsed);
+      }
+    } catch {}
+  }
+
+  const res = await fetch(url, {
     ...options,
     headers,
+    body,
   });
+
+  // Verify server confirmed anonymous user id in response headers
+  const returnedUserId = res.headers.get('x-anonymous-user-id');
+  if (returnedUserId && isValidStoredId(returnedUserId) && returnedUserId !== userId) {
+    setCustomAnonymousUserId(returnedUserId);
+  }
 
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
@@ -186,6 +268,13 @@ export const api = {
     transactionsCount: number;
   }> {
     return request('/api/points');
+  },
+
+  async chat(message: string): Promise<{ reply: string; fallback?: boolean; status?: string }> {
+    return request('/api/chat', {
+      method: 'POST',
+      body: JSON.stringify({ message }),
+    });
   },
 
   async getPointHistory(): Promise<{ transactions: PointTransaction[] }> {

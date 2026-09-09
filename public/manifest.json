@@ -1,0 +1,20 @@
+{
+  "name": "بروفيسور محمد مهدي AI",
+  "short_name": "محمد مهدي AI",
+  "description": "المنصة الذكية المتكاملة للمهام والحملات والنقاط وإدارة الإنجازات بنظام مكافآت حقيقي وقابل للتوسع",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "/background/background.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}

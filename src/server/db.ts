@@ -273,7 +273,13 @@ class TransactionalDatabase {
       modified = true;
     }
 
-    // Permanent sanitization: completely remove any mock, demo, or fake accounts
+    // Permanent sanitization: completely remove any mock, demo, or fake accounts, plus any legacy shared user_default
+    if (this.data.users['user_default']) {
+      delete this.data.users['user_default'];
+      this.data.pointTransactions = this.data.pointTransactions.filter((pt) => pt.anonymousUserId !== 'user_default');
+      modified = true;
+    }
+
     const fakeTaskIds = ['task_sample_instagram_follower', 'task_sample_tiktok_follower'];
     for (const taskId of fakeTaskIds) {
       if (this.data.tasks[taskId]) {
@@ -472,9 +478,18 @@ class TransactionalDatabase {
   }
 
   public getOrCreateUser(userId: string): AnonymousUser {
-    if (!userId || typeof userId !== 'string') {
-      userId = 'user_' + Math.random().toString(36).substring(2, 10);
+    let cleanUserId = typeof userId === 'string' ? userId.trim() : '';
+    if (
+      !cleanUserId ||
+      cleanUserId.length < 4 ||
+      cleanUserId === 'user_default' ||
+      cleanUserId === 'undefined' ||
+      cleanUserId === 'null' ||
+      cleanUserId === 'user_ssr'
+    ) {
+      cleanUserId = 'user_' + Math.random().toString(36).substring(2, 10) + '_' + Date.now().toString(36);
     }
+    userId = cleanUserId;
 
     return this.transaction(() => {
       let isNewUser = false;
